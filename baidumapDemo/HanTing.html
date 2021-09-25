@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>百度地图项目</title>
+
+		<style>
+			.htBody {
+				width: 1200px;
+				margin: 0 auto;
+			}
+			
+			.leftDiv {
+				float: left;
+			}
+			
+			.rightDiv {
+				float: right;
+				width: 300px;
+				height: 415px;
+			}
+			
+			.hotelInfo {
+				width: auto;
+				height: 165px;
+			}
+			
+			.hotelInfo div {
+				float: left;
+				margin-right: 60px;
+			}
+			
+			#rightMap {
+				width: 300px;
+				height: 415px;
+				border: dashed 1px green;
+			}
+			
+			.bg_border{
+				border: 1px solid purple;
+			}
+		</style>
+
+		<script type="text/javascript" src="pic/jquery.js"></script>
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak=Fhht41hbwZRE7mZFqkHRucP62OzXhHVG"></script>
+		<script>
+			// 找到四个点的坐标  然后用循环 把4个点创建出来
+			//第一个点:   113.816012,34.79934   地铁口
+			//第二个点:   113.819803,34.802334  湖中心
+			//第三个点:    113.635919,34.751284  绿城广场
+			//第四个地点:  113.739399,34.726748  中原福塔
+			var map ;
+			var json_data = [
+				[113.816012, 34.79934, "地址:龙子湖地铁口,去高铁站十分方便"],
+				[113.819803, 34.802334, "地址:龙子湖湖中心,玩的会很尽兴"],
+				[113.635919, 34.751284, "地址:绿城广场,西城老区,十分安逸"],
+				[113.739399, 34.726748, "地址:福塔附近,可去福塔登高远望"]
+			];
+
+			var opts = {
+				width: 250, // 信息窗口宽度
+				height: 80, // 信息窗口高度
+				title: "简介", // 信息窗口标题
+				enableMessage: true //设置允许信息窗发送短息
+			};
+
+			$(function() {
+				//创建百度地图
+				 map = new BMap.Map("rightMap");
+				// 创建地图实例  
+				var point = new BMap.Point(113.811231, 34.799966); // 默认龙子湖这边
+				// 创建点坐标  
+				map.centerAndZoom(point, 15);
+				// 初始化地图，设置中心点坐标和地图级别  
+				// 鼠标滚动
+				map.enableScrollWheelZoom(true);
+				// 创建遮盖物
+				var pointArray = new Array();
+				for(var i = 0; i < json_data.length; i++) {
+					var myIcon = new BMap.Icon("pic/mark1.png", new BMap.Size(37, 51));
+					var marker = new BMap.Marker((new BMap.Point(json_data[i][0], json_data[i][1])), {
+						icon: myIcon
+					}); // 创建点
+					var content = json_data[i][2];
+					map.addOverlay(marker); //增加点
+					pointArray[i] = new BMap.Point(json_data[i][0], json_data[i][1]);
+					addClickHandler(content, marker);
+				}
+
+				function addClickHandler(content, marker) {
+					marker.addEventListener("click", function(e) {
+						openInfo(content, e)
+					});
+				}
+
+				function openInfo(content, e) {
+					var p = e.target;
+					var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+					var infoWindow = new BMap.InfoWindow(content, opts); // 创建信息窗口对象 
+					map.openInfoWindow(infoWindow, point); //开启信息窗口
+				}
+
+			});
+		</script>
+		
+		<script>
+		/*	交互*/
+			$(function () {
+				$(".hotelInfo").mouseenter(function () {
+					// 加个边框
+					$(this).addClass("bg_border").siblings().removeClass("bg_border");
+					//右边地图 移动到 相对的位置
+					// 获取地图的点 也就是  json_data的坐标
+					var pt=new BMap.Point( json_data[$(this).index()][0] ,json_data[$(this).index()][1] ); 
+					// 让百度地图  移动到  相对应的坐标
+						map.panTo(pt);
+				});
+				
+				
+				
+			});
+			
+		</script>
+	</head>
+
+	<body>
+		<div class="container">
+			<img src="pic/head.png" />
+
+			<div class="htBody">
+				<!--左边的 酒店信息-->
+				<div class="leftDiv">
+					<div>
+						<img src="pic/leftUp.png" />
+					</div>
+
+					<div class="leftDown">
+						<div class="hotelInfo">
+							<div>
+								<img src="pic/hanting01.jpg" />
+							</div>
+							<div>
+								<p>龙子湖地铁口酒店</p>
+								<img src="pic/hotelInfo.png" />
+							</div>
+							<div>
+
+								<img src="pic/hotelInfo1.png" />
+							</div>
+						</div>
+
+						<div class="hotelInfo">
+							<div>
+								<img src="pic/hanting02.jpg" />
+							</div>
+							<div>
+								<p>龙子湖水上乐园酒店</p>
+								<img src="pic/hotelInfo.png" />
+							</div>
+							<div>
+
+								<img src="pic/hotelInfo1.png" />
+							</div>
+						</div>
+
+						<div class="hotelInfo">
+							<div>
+								<img src="pic/hanting03.jpg" />
+							</div>
+							<div>
+								<p>绿城广场酒店</p>
+								<img src="pic/hotelInfo.png" />
+							</div>
+							<div>
+
+								<img src="pic/hotelInfo1.png" />
+							</div>
+						</div>
+
+						<div class="hotelInfo">
+							<div>
+								<img src="pic/hanting04.jpg" />
+							</div>
+							<div>
+								<p>中原福塔酒店</p>
+								<img src="pic/hotelInfo.png" />
+							</div>
+							<div>
+
+								<img src="pic/hotelInfo1.png" />
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+				<div class="rightDiv">
+					<div id="rightMap">
+
+						<!--插入地图-->
+
+					</div>
+
+				</div>
+
+			</div>
+
+		</div>
+
+	</body>
+
+</html>
